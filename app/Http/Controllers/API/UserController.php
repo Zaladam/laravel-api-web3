@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Models\User;
 use Eloquent;
@@ -10,7 +10,7 @@ use Illuminate\Http\Response;
 /**
  * * @mixin Eloquent
  */
-class UserContoller extends Controller
+class UserController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +19,8 @@ class UserContoller extends Controller
      */
     public function index()
     {
-        return response(User::all());
+        $users = User::all();
+        return $this->sendResponse($users,"Users Fetched.");
     }
 
     /**
@@ -29,12 +30,16 @@ class UserContoller extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $inputs = $request->all();
+        $validator = $request->validate([
             'name' => 'required',
             'email' => 'required',
             'password' => 'required',
         ]);
-        return User::create($request->all());
+        if ($validator->fail()){
+            return $this->sendError($validator->errors());
+        }
+        return $this->sendResponse(User::create($inputs),"User created.");
     }
 
     /**
@@ -45,7 +50,12 @@ class UserContoller extends Controller
      */
     public function show($id)
     {
-        return response(User::findOrFail($id));
+        $user = User::findOrFail($id);
+        if (is_null($user)){
+            return $this->sendError('User does not exist.');
+        }
+        return $this->sendResponse($user,"User Fetched.");
+
     }
 
     /**
@@ -56,8 +66,12 @@ class UserContoller extends Controller
      * @return Response
      */
     public function update(Request $request, $id){
-
-        return tap(User::findOrFail($id))->update($request->all());
+        $inputs = $request->all();
+        if (empty($inputs)){
+            return $this->sendError("No data received.");
+        }
+        $userUpdated = tap(User::findOrFail($id))->update($request->all());
+        return $this->sendResponse($userUpdated,"User updated.");
     }
 
     /**
@@ -68,6 +82,7 @@ class UserContoller extends Controller
      */
     public function destroy($id)
     {
-        return tap(User::findOrFail($id))->delete();
+        User::findOrFail($id)->delete();
+        return $this->sendResponse([],"Product deleted.");
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserContoller;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,12 +15,11 @@ use App\Http\Controllers\UserContoller;
 |
 */
 
-Route::post("/users/signup", [UserContoller::class,"store"]);
-Route::get("/users", [UserContoller::class,"index"]);
-Route::get("/users/{id}", [UserContoller::class,"show"]);
-Route::put("/users/{id}", [UserContoller::class,"update"]);
-Route::delete("/users/{id}", [UserContoller::class,"destroy"]);
+Route::post('/login', [AuthController::class, 'signin']);
+Route::post('/register', [AuthController::class, 'signup']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::middleware('auth:sanctum')->group( function () {
+    Route::resource('users',UserController::class);
 });
+
