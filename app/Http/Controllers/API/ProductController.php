@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\API\BaseController;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Eloquent;
+use Illuminate\Http\Response;
 
 class ProductController extends BaseController
 {
@@ -27,14 +28,13 @@ class ProductController extends BaseController
      */
     public function store(Request $request)
     {
+
         $inputs = $request->all();
         $validator = $request->validate([
             'name' => 'required',
             'price' => 'required',
         ]);
-        if ($validator->fail()){
-            return $this->sendError($validator->errors());
-        }
+
         return $this->sendResponse(Product::create($inputs),"Product created.");
     }
 

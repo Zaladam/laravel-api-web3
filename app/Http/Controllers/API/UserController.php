@@ -36,9 +36,6 @@ class UserController extends BaseController
             'email' => 'required',
             'password' => 'required',
         ]);
-        if ($validator->fail()){
-            return $this->sendError($validator->errors());
-        }
         return $this->sendResponse(User::create($inputs),"User created.");
     }
 

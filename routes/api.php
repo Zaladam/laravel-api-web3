@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 /*
@@ -19,7 +20,15 @@ Route::post('/login', [AuthController::class, 'signin']);
 Route::post('/register', [AuthController::class, 'signup']);
 
 
-Route::middleware('auth:sanctum')->group( function () {
+Route::middleware(['auth:sanctum','is_admin'])->group( function () {
     Route::resource('users',UserController::class);
 });
 
+
+
+
+Route::middleware(['auth:sanctum','is_admin'])->group(function (){
+   Route::resource('products', ProductController::class,['except' => ['index','show']]);
+});
+Route::get('/products',[ProductController::class,'index']);
+Route::get('/products/{id}',[ProductController::class,'show']);
