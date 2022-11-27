@@ -1,0 +1,8 @@
+### Send POST request with json body
+POST {{baseUrl}}/api/products
+Content-Type: multipart/form-data
+
+{
+    "name": "Produit de luxe",
+    "price": "199999"
+}
